@@ -13,7 +13,7 @@ import RxSwift
 class LocationManger:NSObject,CLLocationManagerDelegate {
 
     private let locationManager = CLLocationManager()
-
+    private var myLocation:CLLocation?
     var realTime:Bool = true{
         didSet{
             if !realTime{
@@ -29,7 +29,6 @@ class LocationManger:NSObject,CLLocationManagerDelegate {
     
     override init() {
         super.init()
-        
     }
     
     var disallowLocation:((String)->())?
@@ -43,11 +42,18 @@ class LocationManger:NSObject,CLLocationManagerDelegate {
         }
             locationManager.delegate = self
             locationManager.distanceFilter = 500
+            locationManager.allowsBackgroundLocationUpdates = true
             locationManager.startMonitoringSignificantLocationChanges()
 
     }
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let location = locations.first {
+            if let loc = self.myLocation {
+                if loc.coordinate.latitude == location.coordinate.latitude && loc.coordinate.longitude == location.coordinate.longitude{
+                    return
+                }
+            }
+            self.myLocation = location
             configureLocation.onNext(location)
         }
     }
