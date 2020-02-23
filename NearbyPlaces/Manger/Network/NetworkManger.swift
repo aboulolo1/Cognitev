@@ -18,11 +18,11 @@ class NetworkManger {
         
         self.urlSession.dataTask(with: buildRequest(router)) { (data, response, error) in
             guard error == nil else{
-                completion(.failure(ApiError.serviceUnAvailable))
+                completion(.failure(.error(error!.localizedDescription)))
                 return
             }
             guard let data = data else{
-                completion(.failure(ApiError.serviceUnAvailable))
+                completion(.failure(.serviceUnAvailable))
                 return
             }
             do{
